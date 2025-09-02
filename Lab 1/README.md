@@ -1,4 +1,5 @@
 # Laboratorio 1 - Criptografía y Stealth ICMP
+Creado por Diego Muñoz Barra, Sección 2
 
 ### Descripción
 

@@ -10,12 +10,14 @@ Este laboratorio simula el tráfico de ping y la vulnerabilidad del cifrado Cés
 
 ### Estructura del Repositorio
 
+```bash
 Lab 1/
 ├── cesar.py              # Script de cifrado César
 ├── stealth.py            # Script de envío ICMP stealth
 ├── mitm.py               # Script de captura y descifrado
 ├── captura.pcapng        # Captura de tráfico de ejemplo (Wireshark)
 └── README.md             # Este archivo
+```
 
 ### Requisitos
 

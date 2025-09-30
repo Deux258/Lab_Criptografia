@@ -1,0 +1,59 @@
+#Con ayuda de Chatgpt
+
+#Directorio donde almacenaremos los resultados:
+mkdir -p lab2_outputs
+
+# 1) GET: obtener página y cookies
+curl -s -c cookies.txt 'http://localhost/DVWA/login.php' -o login_page.html
+
+# 2) Extraer token (ejemplo con awk)
+TOKEN=$(grep -oP "name=['\"]user_token['\"]\s+value=['\"]\K[^'\"]+" login_page.html || true)
+echo "Token: $TOKEN"
+
+# 3) POST inválido (no seguir redirecciones, guardar cookies de respuesta)
+curl -i -s -b cookies.txt -c cookies_post_invalid.txt \
+-X POST 'http://localhost/DVWA/login.php' \
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data "username=admin&password=wrongpassword&Login=Login&user_token=${TOKEN}" \
+-o resp_invalid.html
+
+
+# 4) POST válido (credenciales por defecto: admin:password)
+curl -i -s -b cookies.txt -c cookies_post_valid.txt \
+-X POST 'http://localhost/DVWA/login.php' \
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data "username=admin&password=password&Login=Login&user_token=${TOKEN}" \
+-o resp_valid.html
+
+
+#6)
+
+# Extraer la primera línea (status)
+head -n 1 resp_invalid.html
+head -n 1 resp_valid.html
+
+#Header location
+echo "Location (invalid):" && grep -i '^Location:' resp_invalid.html || echo "(none)"
+echo "Location (valid):" && grep -i '^Location:' resp_valid.html || echo "(none)"
+
+#Cookies
+echo "Set-Cookie (invalid):" && grep -i '^Set-Cookie:' resp_invalid.html || true
+echo "Set-Cookie (valid):" && grep -i '^Set-Cookie:' resp_valid.html || true
+
+# Ver archivo con cookies guardadas
+echo "Cookies saved (invalid):" && cat cookies_post_invalid.txt
+echo "Cookies saved (valid):" && cat cookies_post_valid.txt
+
+#Longitud del body
+echo "Tamaño body invalid:" && wc -c resp_invalid.html
+echo "Tamaño body valid:" && wc -c resp_valid.html
+
+# Comparar diferencias en texto
+diff --unchanged-line-format='' --changed-group-format='%<' resp_invalid.html resp_valid.html | head -n 20 || true
+
+#Diferencias del texto
+grep -i -E 'login failed|incorrect|invalid' -n resp_invalid.html || echo "No 'failed' text found in invalid"
+grep -i -E 'welcome|logout|you are logged in' -n resp_valid.html || echo "No 'welcome' text found in valid"
+
+
+

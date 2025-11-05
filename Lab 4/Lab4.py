@@ -1,7 +1,6 @@
 from Crypto.Cipher import DES, AES, DES3
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
-import base64
 
 # =============================================================================
 # INVESTIGACIÓN PREVIA
@@ -105,13 +104,15 @@ def cifrar_des(clave, iv, texto):
     t_bytes = texto.encode('utf-8')
     padding = pad(t_bytes, DES.block_size)
     t_cifrado = cipher.encrypt(padding)
-    return base64.b64encode(t_cifrado).decode('utf-8')
+    #return base64.b64encode(t_cifrado).decode('utf-8')
+    return t_cifrado.hex()
 
 def descifrar_des(clave, iv, t_cifrado):
     cipher = DES.new(clave, DES.MODE_CBC, iv)
-    t_cifrado_bytes = base64.b64decode(t_cifrado)
+    t_cifrado_bytes = bytes.fromhex(t_cifrado)
     t_descifrado = cipher.decrypt(t_cifrado_bytes)
     texto_original = unpad(t_descifrado, DES.block_size)
+    #return texto_original.decode('utf-8')
     return texto_original.decode('utf-8')
 
 def cifrar_aes256(clave, iv, texto):
@@ -119,28 +120,29 @@ def cifrar_aes256(clave, iv, texto):
     t_bytes = texto.encode('utf-8')
     padding = pad(t_bytes, AES.block_size)
     t_cifrado = cipher.encrypt(padding)
-    return base64.b64encode(t_cifrado).decode('utf-8')
+    #return base64.b64encode(t_cifrado).decode('utf-8')
+    return t_cifrado.hex()
 
 def descifrar_aes256(clave, iv, t_cifrado):
     cipher = AES.new(clave, AES.MODE_CBC, iv)
-    t_cifrado_bytes = base64.b64decode(t_cifrado)
+    t_cifrado_bytes = bytes.fromhex(t_cifrado)
     t_descifrado = cipher.decrypt(t_cifrado_bytes)
-    texto_original = unpad(t_descifrado, AES.block_size)
-    return texto_original.decode('utf-8')
+    #texto_original = unpad(t_descifrado, AES.block_size)
+    #return texto_original.decode('utf-8')
+    return unpad(t_descifrado, AES.block_size).decode('utf-8')
 
 def cifrar_3des(clave, iv, texto):
     cipher = DES3.new(clave, DES3.MODE_CBC, iv)
     t_bytes = texto.encode('utf-8')
     padding = pad(t_bytes, DES3.block_size)
     t_cifrado = cipher.encrypt(padding)
-    return base64.b64encode(t_cifrado).decode('utf-8')
+    return t_cifrado.hex()
 
 def descifrar_3des(clave, iv, t_cifrado):
     cipher = DES3.new(clave, DES3.MODE_CBC, iv)
-    t_cifrado_bytes = base64.b64decode(t_cifrado)
+    t_cifrado_bytes = bytes.fromhex(t_cifrado)
     t_descifrado = cipher.decrypt(t_cifrado_bytes)
-    texto_original = unpad(t_descifrado, DES3.block_size)
-    return texto_original.decode('utf-8')
+    return unpad(t_descifrado, DES3.block_size).decode('utf-8')
 
 # =============================================================================
 # FUNCION PRINCIPAL
